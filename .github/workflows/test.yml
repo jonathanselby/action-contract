@@ -1,0 +1,39 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache: false
+      - name: Module contract
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
+      - name: Format contract
+        shell: bash
+        run: |
+          files=$(gofmt -l .)
+          if [ -n "$files" ]; then echo "$files"; exit 1; fi
+      - name: Vet
+        run: go vet ./...
+      - name: Race and acceptance tests
+        run: go test -race -count=1 ./...
+      - name: Initiator example
+        run: |
+          go run ./examples/initiators | tee /tmp/action-contract-example.txt
+          test "$(wc -l < /tmp/action-contract-example.txt)" -eq 4
+          test "$(grep -c ': success$' /tmp/action-contract-example.txt)" -eq 4
+      - name: Native build
+        run: go build ./...
+      - name: Linux ARM64 build
+        run: GOOS=linux GOARCH=arm64 go build ./...
+      - name: Benchmark (non-gating evidence)
+        run: go test -run '^$' -bench '^Benchmark(DirectExecute|Run)$' -benchmem -count=1 .

@@ -1,0 +1,6 @@
+# Generated executables, test output and local tooling
+/bin/
+*.test
+*.out
+coverage.txt
+/.venv/

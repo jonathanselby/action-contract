@@ -1,0 +1,50 @@
+ACTION CONTRACT — V0.1
+======================
+
+ HUMAN UI   API   MCP   EVENT   MODEL   BROWSER
+      \      |     |      |       |      /
+       +-----+-----+------+-------+-----+
+                         |
+                         v
+           APPLICATION SECURITY LAYER
+          (trusted actor/authority refs)
+                         |
+                         v
+                  TYPED ACTION
+                         |
+                         v
+           +----------------------------+
+           | Action Contract: Run       |
+           |----------------------------|
+           | Trusted action definition  |
+           | Type/version validation    |
+           | Governed-reference presence|
+           | Original context forwarded |
+           +-------------+--------------+
+                         |
+                         v
+                APPLICATION FUNCTION
+           (domain checks and side effects)
+                         |
+                         v
+           +----------------------------+
+           | TYPED RESULT               |
+           | success / refused / failed | 
+           | / indeterminate            |
+           | evidence/event references  |
+           | validated metadata         |
+           +----------------------------+
+                         |
+                         v
+                 INITIATOR RESPONSE
+
+TRUST BOUNDARY
+--------------
+Untrusted initiator claims ----X----> AuthorityID / ActorID
+Host security resolution ------------> Trusted references
+Presence checks are NOT authentication or authorisation.
+
+OUTSIDE
+-------
+Transport, router, MCP server, broker, IAM, permissions policy, retries,
+workflow, persistence, tracing, event publishing, model/browser runtime.
